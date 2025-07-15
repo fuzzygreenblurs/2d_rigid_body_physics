@@ -33,7 +33,14 @@ void Application::input() {
 
 void Application::render() {
   Graphics::ClearScreen(0xFF056263);
-  Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
+
+  Graphics::DrawFillCircle(
+    particle->position.x, 
+    particle->position.y, 
+    particle->radius, 
+    0xFFFFFFFF
+  );
+
   Graphics::RenderFrame();
 
 }
@@ -72,10 +79,9 @@ void Application::update() {
     9.8 * PIXELS_PER_METER
   );  
 
-  particle->velocity += particle->acceleration * delta_time;
-  particle->position += particle->velocity * delta_time;
+  particle->integrate(delta_time);
 
-  // check position. limit the position to within the boundaries of the screen  
+  // limit the position to within the boundaries of the screen  
   if(particle->position.x - particle->radius <= 0) {
     particle->position.x = particle->radius;
     particle->velocity.x *= -1.0;
