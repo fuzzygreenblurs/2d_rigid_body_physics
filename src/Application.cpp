@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Application.h"
 #include "physics/Constants.h"
 
@@ -11,7 +12,6 @@ void Application::setup() {
   Particle* small = new Particle(100, 100, 1.0);
   small->radius = 51;
   particles.push_back(small);
-
   
   Particle* big   = new Particle(300, 200, 3.0);
   big->radius = 12;
@@ -32,9 +32,46 @@ void Application::input() {
           running = false;
         }
 
+        if (event.key.keysym.sym == SDLK_UP) {
+          push_force.y = -50 * PIXELS_PER_METER;
+          std::cout << "pushforce: " << push_force.x << " " << push_force.y << std::endl;
+        }
+
+        if (event.key.keysym.sym == SDLK_RIGHT) {
+          push_force.x = 50 * PIXELS_PER_METER;
+        }
+
+        if (event.key.keysym.sym == SDLK_DOWN) {
+          push_force.y = 50 * PIXELS_PER_METER;
+        }
+
+        if (event.key.keysym.sym == SDLK_LEFT) {
+          push_force.x = -50 * PIXELS_PER_METER;
+        }
+
         break;
+
+      case SDL_KEYUP:
+        if (event.key.keysym.sym == SDLK_UP) {
+          push_force.y = 0;
+        }
+
+        if (event.key.keysym.sym == SDLK_RIGHT) {
+          push_force.x = 0;
+        }
+
+        if (event.key.keysym.sym == SDLK_DOWN) {
+          push_force.y = 0;
+        }
+
+        if (event.key.keysym.sym == SDLK_LEFT) {
+          push_force.x = 0;
+        }
+
+        break;
+      }
     }
-  }
+  
 }
 
 void Application::render() {
@@ -45,7 +82,7 @@ void Application::render() {
       particle->position.x, 
       particle->position.y, 
       particle->radius, 
-      0xFFFFFFFF
+     0xFFFFFFFF
     );
   }
 
@@ -84,12 +121,18 @@ void Application::update() {
   for(auto particle : particles) {
     Vec2 wind = Vec2(1 * PIXELS_PER_METER, 0);
     particle->add_force(wind);
-    particle->integrate(delta_time);
   }
 
   for(auto particle : particles) {
     Vec2 weight = Vec2(0, 9.81 * particle->mass * PIXELS_PER_METER);
     particle->add_force(weight);
+  }
+
+  for(auto particle : particles) {
+    particle->add_force(push_force);
+  }
+
+  for(auto particle : particles) {
     particle->integrate(delta_time);
   }
 
