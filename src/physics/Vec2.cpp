@@ -107,8 +107,8 @@ Vec2 Vec2::operator * (float n) const {
 
 Vec2 Vec2::operator / (float n) const {
   Vec2 result;
-  result.x = n / x;  
-  result.y = n / y; 
+  result.x = x / n;  
+  result.y = y / n; 
   return result;
 }
 

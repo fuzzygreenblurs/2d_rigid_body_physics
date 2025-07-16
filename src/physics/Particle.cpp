@@ -11,7 +11,18 @@ Particle::~Particle() {
   std::cout << "particle destructor called" << std::endl;
 }
 
-void Particle::integrate(const float dt) {
-  this->velocity += this->acceleration * dt;
-  this->position += this->velocity * dt;
+void Particle::add_force(const Vec2& force) {
+  sum_forces += force; 
 }
+
+void Particle::clear_forces() {
+  this->sum_forces = Vec2(0.0, 0.0); 
+}
+
+void Particle::integrate(const float dt) {
+  acceleration = sum_forces / mass;
+  velocity += acceleration * dt;
+  position += velocity * dt;
+  clear_forces();
+}
+  

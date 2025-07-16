@@ -5,11 +5,10 @@ bool Application::is_running() {
   return running;
 }
 
-
 void Application::setup() {
   running = Graphics::OpenWindow();
 
-  particle = new Particle(200, 100, 1.0);
+  particle = new Particle(300, 100, 5.0);
   particle->radius = 4;
 }
 
@@ -42,7 +41,6 @@ void Application::render() {
   );
 
   Graphics::RenderFrame();
-
 }
 
 void Application::update() {
@@ -74,11 +72,8 @@ void Application::update() {
     framerate. if the framerate drops, the particle is updated fewer times per second
     but it should traverse the same number of distance units/second 
   */
-  particle->acceleration = Vec2(
-    2.0 * PIXELS_PER_METER, 
-    9.8 * PIXELS_PER_METER
-  );  
-
+  Vec2 wind = Vec2(100.0, 0);
+  particle->add_force(wind);
   particle->integrate(delta_time);
 
   // limit the position to within the boundaries of the screen  
@@ -95,8 +90,7 @@ void Application::update() {
     particle->velocity.y *= -1.0;
   } else if (particle->position.y + particle->radius >= Graphics::Height()) {
     particle->position.y = Graphics::Height() - particle->radius;
-    particle->velocity.y *= -1.0;
-  }
+    particle->velocity.y *= -1.0; }
 }
 
 void Application::destroy() {
