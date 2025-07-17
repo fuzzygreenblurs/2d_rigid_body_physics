@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Application.h"
 #include "physics/Constants.h"
+#include "physics/Force.h"
 
 bool Application::is_running() {
   return running;
@@ -16,6 +17,11 @@ void Application::setup() {
   Particle* big   = new Particle(300, 200, 3.0);
   big->radius = 12;
   particles.push_back(big);
+
+  liquid.x = 0;
+  liquid.y = Graphics::Height() / 2;
+  liquid.w = Graphics::Width();
+  liquid.h = Graphics::Height() / 2;
 }
 
 void Application::input() {
@@ -71,11 +77,18 @@ void Application::input() {
         break;
       }
     }
-  
 }
 
 void Application::render() {
   Graphics::ClearScreen(0xFF056263);
+
+  Graphics::DrawFillRect(
+    liquid.x + liquid.w / 2,
+    liquid.y + liquid.h / 2,
+    liquid.w,
+    liquid.h,
+    0xFF6e3713
+  );
   
   for(auto particle : particles) {
     Graphics::DrawFillCircle(
@@ -130,6 +143,10 @@ void Application::update() {
 
   for(auto particle : particles) {
     particle->add_force(push_force);
+    if(particle->position.y >= liquid.y) {
+      Vec2 drag = Force::generate_drag_force(*particle, 0.01);
+      particle->add_force(drag);
+    }
   }
 
   for(auto particle : particles) {

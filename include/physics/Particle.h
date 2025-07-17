@@ -10,6 +10,7 @@ struct Particle {
   Vec2 acceleration;
   Vec2 sum_forces;
   float mass;
+  float inv_mass;
 
   Particle(float x, float y, float mass);
   ~Particle();
